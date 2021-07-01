@@ -1,0 +1,8 @@
+# Python Ignores
+__pycache__/
+
+# Vim Ignores
+.swp
+
+# Ignore database.env
+*.env
