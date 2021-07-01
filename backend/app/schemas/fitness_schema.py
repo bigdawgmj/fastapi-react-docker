@@ -1,11 +1,12 @@
 # from typing import List, Optional
 from pydantic import BaseModel
-from datetime import datetime
+from datetime import date
+# from sqlalchemy.types import Date
 
 
 class FitnessBase(BaseModel):
     fitnessid: int
-    fitnessdate: datetime
+    fitnessdate: date
     fitnessminutes: int
 
     class Config:
