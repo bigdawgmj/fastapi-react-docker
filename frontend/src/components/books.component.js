@@ -1,4 +1,5 @@
 import React from 'react';
+import Button from '@material-ui/core/Button';
 
 class BooksComponent extends React.Component {
 	constructor(props) {
@@ -38,13 +39,15 @@ class BooksComponent extends React.Component {
 		} else if (!isLoaded) {
 			return <div>Loading...</div>
 		} else {
-			return <ul>
+			return <div><ul>
 				{books.map((book, idx) => (
 					<li key={idx}>
 						{book}
 					</li>
 				))}
 			</ul>
+			<button variant="contained">Do Things!</button>
+			</div>
 		}
 
 	}
