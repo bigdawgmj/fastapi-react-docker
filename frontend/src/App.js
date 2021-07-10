@@ -1,11 +1,11 @@
 // import logo from './logo.svg';
 import './App.css';
-import BooksComponent from './components/books.component';
+import DashboardComponent from './components/dashboard.component';
 
 function App() {
   return (
     <div className="App">
-      <BooksComponent></BooksComponent>
+      <DashboardComponent></DashboardComponent>
     </div>
   );
 }

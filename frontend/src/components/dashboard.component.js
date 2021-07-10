@@ -49,7 +49,7 @@ const styles = (theme) => ({
     },
 });
 
-class BooksComponent extends React.Component {
+class DashboardComponent extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -231,4 +231,4 @@ class BooksComponent extends React.Component {
     }
 }
 
-export default withStyles(styles)(BooksComponent);
+export default withStyles(styles)(DashboardComponent);
