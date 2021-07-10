@@ -10,18 +10,13 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import { Delete } from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles';
 import { VictoryBar, VictoryChart, VictoryAxis, VictoryTheme } from 'victory';
 import { range } from 'lodash';
+import AddForm from './AddForm/add-form.component';
 
 import axios from 'axios';
-// import MultilineChart from './MultilineChart';
-
-// const dimensions = {
-//     width: 400,
-//     height: 200,
-//     margin: { top: 30, right: 30, bottom: 30, left: 60 },
-// };
 
 const styles = (theme) => ({
     root: {
@@ -63,13 +58,14 @@ class BooksComponent extends React.Component {
         };
     }
 
-    componentDidMount() {
-        const baseUrl = 'http://localhost:8080/api/fitness/';
-        axios.get(baseUrl + `weekavg?start=2021-06-01&end=2021-07-09`).then((res) => {
+	baseUrl = 'http://localhost:8080/api/fitness/';
+	getWeekAvg = () => {
+        axios.get(this.baseUrl + `weekavg?start=2021-06-01&end=2021-07-09`).then((res) => {
             this.setState({ avgData: res.data.agg });
         });
-
-        axios.get(baseUrl + `weeksum?start=2021-06-01&end=2021-07-09`).then((res) => {
+	}
+	getWeekSum = () => {
+        axios.get(this.baseUrl + `weeksum?start=2021-06-01&end=2021-07-09`).then((res) => {
             res.data.agg.forEach((d) => {
                 if (d.minutes > this.state.totalWeeks) {
                     this.setState({ totalWeeks: d.week });
@@ -77,19 +73,37 @@ class BooksComponent extends React.Component {
             });
             this.setState({ sumData: res.data.agg });
         });
-
-        axios.get(baseUrl + `period?end=7-1-2021&start=1-1-2021`).then((res) => {
+	}
+	getRecords = () => {
+        axios.get(this.baseUrl + `period?end=7-31-2021&start=1-1-2021`).then((res) => {
             const sortedItems = res.data.sort((a, b) => (a.fitnessdate > b.fitnessdate ? 1 : -1));
             this.setState({
                 isLoaded: true,
                 weekAvg: { name: 'Fitness', color: '#08c96b', items: sortedItems.map((d) => ({ ...d, date: new Date(d.fitnessdate) })) },
             });
         });
+	}
+
+	refreshData = () => {
+		this.getWeekAvg();
+		this.getWeekSum();
+		this.getRecords();
+	}
+
+    componentDidMount() {
+		this.refreshData();
     }
 
     render() {
         const { classes } = this.props;
         const { error, isLoaded } = this.state;
+
+		const handleDelete = (row) => {
+			axios.delete('http://localhost:8080/api/fitness/remove/' + row.fitnessid)
+				.then(res => {
+					this.refreshData();
+				});
+		}
 
         if (error) {
             return <div>Error: {error.message}</div>;
@@ -163,6 +177,7 @@ class BooksComponent extends React.Component {
                                                     <TableRow>
                                                         <TableCell align="center">Date</TableCell>
                                                         <TableCell align="center">Minutes Exercised</TableCell>
+														<TableCell align="center">Actions</TableCell>
                                                     </TableRow>
                                                 </TableHead>
                                                 <TableBody>
@@ -170,6 +185,9 @@ class BooksComponent extends React.Component {
                                                         <TableRow key={row.name}>
                                                             <TableCell align="center">{row.fitnessdate}</TableCell>
                                                             <TableCell align="center">{row.fitnessminutes}</TableCell>
+															<TableCell align="center">
+																<Delete color="secondary" onClick={(evt) => { handleDelete(row) }}/>
+															</TableCell>
                                                         </TableRow>
                                                     ))}
                                                 </TableBody>
@@ -179,6 +197,15 @@ class BooksComponent extends React.Component {
                                 </CardContent>
                             </Card>
                         </Grid>
+                        <Grid item xs={12}>
+                            <Card className={classes.cards}>
+                                <CardContent>
+                                    <Paper className={classes.paper}>
+										<AddForm refreshData={this.refreshData}/>
+									</Paper>
+                                </CardContent>
+							</Card>
+						</Grid>
                     </Grid>
                 </div>
             );
