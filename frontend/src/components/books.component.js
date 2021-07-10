@@ -12,7 +12,13 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import { Delete } from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles';
-import { VictoryBar, VictoryChart, VictoryAxis, VictoryTheme } from 'victory';
+import {
+	VictoryBar,
+	VictoryChart,
+	VictoryAxis,
+	VictoryTooltip,
+	VictoryTheme
+} from 'victory';
 import { range } from 'lodash';
 import AddForm from './AddForm/add-form.component';
 
@@ -137,7 +143,13 @@ class BooksComponent extends React.Component {
                                                 fixLabelOverlap={true}
                                                 dependentAxis
                                             />
-                                            <VictoryBar data={this.state.avgData} x="week" y="avg_minutes" />
+                                            <VictoryBar
+												data={this.state.avgData}
+												x="week"
+												y="avg_minutes"
+												labels={({datum}) => `minutes: ${datum.avg_minutes.toFixed(1)}`}
+												labelComponent={<VictoryTooltip dy={0} centerOffset={{x: 25}} />}
+											/>
                                         </VictoryChart>
                                     </Paper>
                                 </CardContent>
@@ -161,12 +173,27 @@ class BooksComponent extends React.Component {
                                                 style={{ axisLabel: { fontSize: 12, padding: 40 } }}
                                                 fixLabelOverlap={true}
                                             />
-                                            <VictoryBar data={this.state.sumData} x="week" y="minutes" />
+                                            <VictoryBar
+												data={this.state.sumData}
+												x="week"
+												y="minutes"
+												labels={({datum}) => `minutes: ${datum.minutes}`}
+												labelComponent={<VictoryTooltip dy={0} centerOffset={{x: 25}} />}
+											/>
                                         </VictoryChart>
                                     </Paper>
                                 </CardContent>
                             </Card>
                         </Grid>
+                        <Grid item xs={12}>
+                            <Card className={classes.cards}>
+                                <CardContent>
+                                    <Paper className={classes.paper}>
+										<AddForm refreshData={this.refreshData}/>
+									</Paper>
+                                </CardContent>
+							</Card>
+						</Grid>
                         <Grid item xs={12}>
                             <Card className={classes.cards}>
                                 <CardContent>
@@ -182,7 +209,7 @@ class BooksComponent extends React.Component {
                                                 </TableHead>
                                                 <TableBody>
                                                     {this.state.weekAvg.items.map((row) => (
-                                                        <TableRow key={row.name}>
+                                                        <TableRow key={row.fitnessdate}>
                                                             <TableCell align="center">{row.fitnessdate}</TableCell>
                                                             <TableCell align="center">{row.fitnessminutes}</TableCell>
 															<TableCell align="center">
@@ -197,15 +224,6 @@ class BooksComponent extends React.Component {
                                 </CardContent>
                             </Card>
                         </Grid>
-                        <Grid item xs={12}>
-                            <Card className={classes.cards}>
-                                <CardContent>
-                                    <Paper className={classes.paper}>
-										<AddForm refreshData={this.refreshData}/>
-									</Paper>
-                                </CardContent>
-							</Card>
-						</Grid>
                     </Grid>
                 </div>
             );

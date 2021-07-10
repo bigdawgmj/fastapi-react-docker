@@ -1,7 +1,6 @@
 import React from 'react';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import axios from 'axios';
 
@@ -15,8 +14,19 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const AddForm = (props) => {
+	const padStr = (i) => {
+		return (i < 10) ? "0" + i : "" + i;
+	}
+
+	const getTodayString = () => {
+		    const temp = new Date();
+			return padStr(temp.getFullYear()) + "-" +
+				  padStr(1 + temp.getMonth()) + "-" +
+				  padStr(temp.getDate());
+	}
+
 	const classes = useStyles();
-	const [selectedDate, setSelectedDate] = React.useState(new Date());
+	const [selectedDate, setSelectedDate] = React.useState(getTodayString());
 	const [minutes, setMinutes] = React.useState(0);
 
 	const handleDateChange = (evt) => {
@@ -47,7 +57,7 @@ const AddForm = (props) => {
 				<TextField
 					id="Date"
 					type="date"
-					value={selectedDate}
+					defaultValue={selectedDate}
 					onChange={handleDateChange}
 					label="Fitness Date"
 					variant="outlined" />
