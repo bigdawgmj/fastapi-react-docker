@@ -59,13 +59,22 @@ class DashboardComponent extends React.Component {
     }
 
     baseUrl = 'http://localhost:8080/api/fitness/';
+    padStr = (i) => {
+        return i < 10 ? '0' + i : '' + i;
+    };
+
+    getTodayString = () => {
+        const temp = new Date();
+        return this.padStr(temp.getFullYear()) + '-' + this.padStr(1 + temp.getMonth()) + '-' + this.padStr(temp.getDate());
+    };
+
     getWeekAvg = () => {
-        axios.get(this.baseUrl + `weekavg?start=2021-06-01&end=2021-07-09`).then((res) => {
+        axios.get(this.baseUrl + `weekavg?start=2021-06-01&end=` + this.getTodayString()).then((res) => {
             this.setState({ avgData: res.data.agg });
         });
     };
     getWeekSum = () => {
-        axios.get(this.baseUrl + `weeksum?start=2021-06-01&end=2021-07-09`).then((res) => {
+        axios.get(this.baseUrl + `weeksum?start=2021-06-01&end=` + this.getTodayString()).then((res) => {
             res.data.agg.forEach((d) => {
                 if (d.minutes > this.state.totalWeeks) {
                     this.setState({ totalWeeks: d.week });
@@ -75,7 +84,7 @@ class DashboardComponent extends React.Component {
         });
     };
     getRecords = () => {
-        axios.get(this.baseUrl + `period?end=7-31-2021&start=1-1-2021`).then((res) => {
+        axios.get(this.baseUrl + `period?start=1-1-2021&end=7-31-2021`).then((res) => {
             const sortedItems = res.data.sort((a, b) => (a.fitnessdate > b.fitnessdate ? 1 : -1));
             this.setState({
                 isLoaded: true,
