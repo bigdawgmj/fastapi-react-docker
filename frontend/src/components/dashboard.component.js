@@ -12,13 +12,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import { Delete } from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles';
-import {
-	VictoryBar,
-	VictoryChart,
-	VictoryAxis,
-	VictoryTooltip,
-	VictoryTheme
-} from 'victory';
+import { VictoryBar, VictoryChart, VictoryAxis, VictoryTooltip, VictoryTheme } from 'victory';
 import { range } from 'lodash';
 import AddForm from './AddForm/add-form.component';
 
@@ -64,13 +58,13 @@ class DashboardComponent extends React.Component {
         };
     }
 
-	baseUrl = 'http://localhost:8080/api/fitness/';
-	getWeekAvg = () => {
+    baseUrl = 'http://localhost:8080/api/fitness/';
+    getWeekAvg = () => {
         axios.get(this.baseUrl + `weekavg?start=2021-06-01&end=2021-07-09`).then((res) => {
             this.setState({ avgData: res.data.agg });
         });
-	}
-	getWeekSum = () => {
+    };
+    getWeekSum = () => {
         axios.get(this.baseUrl + `weeksum?start=2021-06-01&end=2021-07-09`).then((res) => {
             res.data.agg.forEach((d) => {
                 if (d.minutes > this.state.totalWeeks) {
@@ -79,8 +73,8 @@ class DashboardComponent extends React.Component {
             });
             this.setState({ sumData: res.data.agg });
         });
-	}
-	getRecords = () => {
+    };
+    getRecords = () => {
         axios.get(this.baseUrl + `period?end=7-31-2021&start=1-1-2021`).then((res) => {
             const sortedItems = res.data.sort((a, b) => (a.fitnessdate > b.fitnessdate ? 1 : -1));
             this.setState({
@@ -88,28 +82,27 @@ class DashboardComponent extends React.Component {
                 weekAvg: { name: 'Fitness', color: '#08c96b', items: sortedItems.map((d) => ({ ...d, date: new Date(d.fitnessdate) })) },
             });
         });
-	}
+    };
 
-	refreshData = () => {
-		this.getWeekAvg();
-		this.getWeekSum();
-		this.getRecords();
-	}
+    refreshData = () => {
+        this.getWeekAvg();
+        this.getWeekSum();
+        this.getRecords();
+    };
 
     componentDidMount() {
-		this.refreshData();
+        this.refreshData();
     }
 
     render() {
         const { classes } = this.props;
         const { error, isLoaded } = this.state;
 
-		const handleDelete = (row) => {
-			axios.delete('http://localhost:8080/api/fitness/remove/' + row.fitnessid)
-				.then(res => {
-					this.refreshData();
-				});
-		}
+        const handleDelete = (row) => {
+            axios.delete('http://localhost:8080/api/fitness/remove/' + row.fitnessid).then((res) => {
+                this.refreshData();
+            });
+        };
 
         if (error) {
             return <div>Error: {error.message}</div>;
@@ -122,7 +115,7 @@ class DashboardComponent extends React.Component {
                         <Grid item xs={12}>
                             <Card className={classes.cards}>
                                 <Paper className={classes.headPaper}>
-                                    <h1>Mark's Fitness Tracker</h1>
+                                    <h1>Viking Fitness Tracker</h1>
                                 </Paper>
                             </Card>
                         </Grid>
@@ -144,12 +137,12 @@ class DashboardComponent extends React.Component {
                                                 dependentAxis
                                             />
                                             <VictoryBar
-												data={this.state.avgData}
-												x="week"
-												y="avg_minutes"
-												labels={({datum}) => `minutes: ${datum.avg_minutes.toFixed(1)}`}
-												labelComponent={<VictoryTooltip dy={0} centerOffset={{x: 25}} />}
-											/>
+                                                data={this.state.avgData}
+                                                x="week"
+                                                y="avg_minutes"
+                                                labels={({ datum }) => `minutes: ${datum.avg_minutes.toFixed(1)}`}
+                                                labelComponent={<VictoryTooltip dy={0} centerOffset={{ x: 25 }} />}
+                                            />
                                         </VictoryChart>
                                     </Paper>
                                 </CardContent>
@@ -174,12 +167,12 @@ class DashboardComponent extends React.Component {
                                                 fixLabelOverlap={true}
                                             />
                                             <VictoryBar
-												data={this.state.sumData}
-												x="week"
-												y="minutes"
-												labels={({datum}) => `minutes: ${datum.minutes}`}
-												labelComponent={<VictoryTooltip dy={0} centerOffset={{x: 25}} />}
-											/>
+                                                data={this.state.sumData}
+                                                x="week"
+                                                y="minutes"
+                                                labels={({ datum }) => `minutes: ${datum.minutes}`}
+                                                labelComponent={<VictoryTooltip dy={0} centerOffset={{ x: 25 }} />}
+                                            />
                                         </VictoryChart>
                                     </Paper>
                                 </CardContent>
@@ -189,11 +182,11 @@ class DashboardComponent extends React.Component {
                             <Card className={classes.cards}>
                                 <CardContent>
                                     <Paper className={classes.paper}>
-										<AddForm refreshData={this.refreshData}/>
-									</Paper>
+                                        <AddForm refreshData={this.refreshData} />
+                                    </Paper>
                                 </CardContent>
-							</Card>
-						</Grid>
+                            </Card>
+                        </Grid>
                         <Grid item xs={12}>
                             <Card className={classes.cards}>
                                 <CardContent>
@@ -204,7 +197,7 @@ class DashboardComponent extends React.Component {
                                                     <TableRow>
                                                         <TableCell align="center">Date</TableCell>
                                                         <TableCell align="center">Minutes Exercised</TableCell>
-														<TableCell align="center">Actions</TableCell>
+                                                        <TableCell align="center">Actions</TableCell>
                                                     </TableRow>
                                                 </TableHead>
                                                 <TableBody>
@@ -212,9 +205,14 @@ class DashboardComponent extends React.Component {
                                                         <TableRow key={row.fitnessdate}>
                                                             <TableCell align="center">{row.fitnessdate}</TableCell>
                                                             <TableCell align="center">{row.fitnessminutes}</TableCell>
-															<TableCell align="center">
-																<Delete color="secondary" onClick={(evt) => { handleDelete(row) }}/>
-															</TableCell>
+                                                            <TableCell align="center">
+                                                                <Delete
+                                                                    color="secondary"
+                                                                    onClick={(evt) => {
+                                                                        handleDelete(row);
+                                                                    }}
+                                                                />
+                                                            </TableCell>
                                                         </TableRow>
                                                     ))}
                                                 </TableBody>
