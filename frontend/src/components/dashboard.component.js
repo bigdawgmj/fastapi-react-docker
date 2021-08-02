@@ -10,13 +10,15 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import TablePagination from '@material-ui/core/TablePagination';
 import { Delete } from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles';
-import { VictoryBar, VictoryChart, VictoryAxis, VictoryTooltip, VictoryTheme } from 'victory';
+import { VictoryBar, VictoryChart, VictoryAxis, VictoryTooltip, VictoryBrushContainer, VictoryTheme } from 'victory';
 import { range } from 'lodash';
 import AddForm from './AddForm/add-form.component';
 
 import axios from 'axios';
+import { red } from '@material-ui/core/colors';
 
 const styles = (theme) => ({
     root: {
@@ -58,7 +60,7 @@ class DashboardComponent extends React.Component {
         };
     }
 
-    baseUrl = 'http://localhost:8080/api/fitness/';
+    baseUrl = 'http://168.180.204.117:8080/api/fitness/';
     padStr = (i) => {
         return i < 10 ? '0' + i : '' + i;
     };
@@ -103,12 +105,21 @@ class DashboardComponent extends React.Component {
         this.refreshData();
     }
 
+    // handleChangePage = (event, newPage) => {
+    //     setPage(newPage);
+    // };
+
+    // handleChangeRowsPerPage = (event) => {
+    //     setRowsPerPage(parseInt(event.target.value, 10));
+    //     setPage(0);
+    // };
+
     render() {
         const { classes } = this.props;
         const { error, isLoaded } = this.state;
 
         const handleDelete = (row) => {
-            axios.delete('http://localhost:8080/api/fitness/remove/' + row.fitnessid).then((res) => {
+            axios.delete(this.baseUrl + 'remove/' + row.fitnessid).then((res) => {
                 this.refreshData();
             });
         };
@@ -128,7 +139,16 @@ class DashboardComponent extends React.Component {
                                 </Paper>
                             </Card>
                         </Grid>
-                        <Grid item xs={6}>
+                        <Grid item xs={12}>
+                            <Card className={classes.cards}>
+                                <CardContent>
+                                    <Paper className={classes.paper}>
+                                        <AddForm refreshData={this.refreshData} />
+                                    </Paper>
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                        <Grid item xs={4}>
                             <Card className={classes.cards}>
                                 <CardHeader title={'Weekly Averages'} />
                                 <CardContent>
@@ -157,7 +177,7 @@ class DashboardComponent extends React.Component {
                                 </CardContent>
                             </Card>
                         </Grid>
-                        <Grid item xs={6}>
+                        <Grid item xs={4}>
                             <Card className={classes.cards}>
                                 <CardHeader title={'Weekly Totals'} />
                                 <CardContent>
@@ -187,16 +207,7 @@ class DashboardComponent extends React.Component {
                                 </CardContent>
                             </Card>
                         </Grid>
-                        <Grid item xs={12}>
-                            <Card className={classes.cards}>
-                                <CardContent>
-                                    <Paper className={classes.paper}>
-                                        <AddForm refreshData={this.refreshData} />
-                                    </Paper>
-                                </CardContent>
-                            </Card>
-                        </Grid>
-                        <Grid item xs={12}>
+                        <Grid item xs={4}>
                             <Card className={classes.cards}>
                                 <CardContent>
                                     <Paper className={classes.paper}>
@@ -239,3 +250,15 @@ class DashboardComponent extends React.Component {
 }
 
 export default withStyles(styles)(DashboardComponent);
+
+/*
+                                        <TablePagination
+                                            rowsPerPageOptions={[5, 10, 25]}
+                                            component="div"
+                                            count={this.state.weekAvg.items.length}
+                                            rowsPerPage={rowsPerPage}
+                                            page={page}
+                                            onPageChange={handleChangePage}
+                                            onRowsPerPageChange={handleChangeRowsPerPage}
+                                        />
+*/
