@@ -10,15 +10,15 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import TablePagination from '@material-ui/core/TablePagination';
+// import TablePagination from '@material-ui/core/TablePagination';
 import { Delete } from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles';
-import { VictoryBar, VictoryChart, VictoryAxis, VictoryTooltip, VictoryBrushContainer, VictoryTheme } from 'victory';
+import { VictoryBar, VictoryChart, VictoryAxis, VictoryTooltip, VictoryTheme } from 'victory';
 import { range } from 'lodash';
 import AddForm from './AddForm/add-form.component';
 
 import axios from 'axios';
-import { red } from '@material-ui/core/colors';
+// import { red } from '@material-ui/core/colors';
 
 const styles = (theme) => ({
     root: {
@@ -86,7 +86,7 @@ class DashboardComponent extends React.Component {
         });
     };
     getRecords = () => {
-        axios.get(this.baseUrl + `period?start=1-1-2021&end=7-31-2021`).then((res) => {
+        axios.get(this.baseUrl + `period?start=2021-01-01&end=` + this.getTodayString()).then((res) => {
             const sortedItems = res.data.sort((a, b) => (a.fitnessdate > b.fitnessdate ? 1 : -1));
             this.setState({
                 isLoaded: true,

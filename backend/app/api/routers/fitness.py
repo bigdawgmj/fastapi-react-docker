@@ -28,11 +28,11 @@ async def get_fitness(db: Session = Depends(get_db)):
     return get_fitness_records(db)
 
 @router.get('/period')
-async def get_period(end: str = "01-01-2020", 
-               start: str = "01-01-1970",
+async def get_period(end: str = "2020-01-01", 
+               start: str = "1970-01-01",
                db: Session = Depends(get_db)):
-    start_dt = datetime.strptime(start, "%m-%d-%Y").date()
-    end_dt = datetime.strptime(end, "%m-%d-%Y").date()
+    start_dt = datetime.strptime(start, "%Y-%m-%d").date()
+    end_dt = datetime.strptime(end, "%Y-%m-%d").date()
     return db.query(Fitness) \
              .filter(Fitness.fitnessdate >= start_dt) \
              .filter(Fitness.fitnessdate <= end_dt) \
