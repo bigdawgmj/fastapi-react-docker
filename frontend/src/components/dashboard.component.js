@@ -59,7 +59,7 @@ class DashboardComponent extends React.Component {
             totalWeeks: 0,
             minWeeks: 0,
             aq: [],
-            page: 1,
+            page: 0,
             rowsPerPage: 10,
         };
     }
