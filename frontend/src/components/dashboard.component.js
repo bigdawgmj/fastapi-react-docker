@@ -10,7 +10,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-// import TablePagination from '@material-ui/core/TablePagination';
+import TablePagination from '@material-ui/core/TablePagination';
 import { Delete } from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles';
 import { VictoryBar, VictoryChart, VictoryAxis, VictoryTooltip, VictoryTheme } from 'victory';
@@ -18,6 +18,7 @@ import { range } from 'lodash';
 import AddForm from './AddForm/add-form.component';
 
 import axios from 'axios';
+// import AirQuality from './AirQuality/air-quality.component';
 // import { red } from '@material-ui/core/colors';
 
 const styles = (theme) => ({
@@ -57,6 +58,9 @@ class DashboardComponent extends React.Component {
             sumData: [],
             totalWeeks: 0,
             minWeeks: 0,
+            aq: [],
+            page: 1,
+            rowsPerPage: 10,
         };
     }
 
@@ -95,6 +99,25 @@ class DashboardComponent extends React.Component {
         });
     };
 
+    // getAirQuality = () => {
+    //     axios
+    //         .get('https://www.aqandu.org/api/timeAggregatedDataFrom', {
+    //             params: {
+    //                 id: 'PP15827',
+    //                 sensorSource: 'PurpleAir',
+    //                 start: '2021-06-01T00:00:00Z',
+    //                 end: new Date().toISOString().split('.')[0] + 'Z',
+    //                 function: 'mean',
+    //                 timeInterval: '15',
+    //             },
+    //             headers: { 'Access-Control-Allow-Origin': '*' },
+    //         })
+    //         .then((response) => {
+    //             console.log(JSON.stringify(response.data));
+    //             // this.setState({ aq: response.data });
+    //         });
+    // };
+
     refreshData = () => {
         this.getWeekAvg();
         this.getWeekSum();
@@ -103,16 +126,25 @@ class DashboardComponent extends React.Component {
 
     componentDidMount() {
         this.refreshData();
+        // this.getAirQuality();
     }
 
-    // handleChangePage = (event, newPage) => {
-    //     setPage(newPage);
-    // };
+    setPage(page) {
+        this.setState({ page: page });
+    }
 
-    // handleChangeRowsPerPage = (event) => {
-    //     setRowsPerPage(parseInt(event.target.value, 10));
-    //     setPage(0);
-    // };
+    setRowsPerPage(rows) {
+        this.setState({ rowsPerPage: rows });
+    }
+
+    handleChangePage = (event, newPage) => {
+        this.setPage(newPage);
+    };
+
+    handleChangeRowsPerPage = (event) => {
+        this.setRowsPerPage(parseInt(event.target.value, 10));
+        this.setPage(0);
+    };
 
     render() {
         const { classes } = this.props;
@@ -221,23 +253,38 @@ class DashboardComponent extends React.Component {
                                                     </TableRow>
                                                 </TableHead>
                                                 <TableBody>
-                                                    {this.state.weekAvg.items.map((row) => (
-                                                        <TableRow key={row.fitnessdate}>
-                                                            <TableCell align="center">{row.fitnessdate}</TableCell>
-                                                            <TableCell align="center">{row.fitnessminutes}</TableCell>
-                                                            <TableCell align="center">
-                                                                <Delete
-                                                                    color="secondary"
-                                                                    onClick={(evt) => {
-                                                                        handleDelete(row);
-                                                                    }}
-                                                                />
-                                                            </TableCell>
-                                                        </TableRow>
-                                                    ))}
+                                                    {this.state.weekAvg.items
+                                                        .sort((a, b) => new Date(b.fitnessdate) - new Date(a.fitnessdate))
+                                                        .slice(
+                                                            this.state.page * this.state.rowsPerPage,
+                                                            this.state.page * this.state.rowsPerPage + this.state.rowsPerPage
+                                                        )
+                                                        .map((row) => (
+                                                            <TableRow key={row.fitnessdate}>
+                                                                <TableCell align="center">{row.fitnessdate}</TableCell>
+                                                                <TableCell align="center">{row.fitnessminutes}</TableCell>
+                                                                <TableCell align="center">
+                                                                    <Delete
+                                                                        color="secondary"
+                                                                        onClick={(evt) => {
+                                                                            handleDelete(row);
+                                                                        }}
+                                                                    />
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        ))}
                                                 </TableBody>
                                             </Table>
                                         </TableContainer>
+                                        <TablePagination
+                                            rowsPerPageOptions={[5, 10, 25]}
+                                            component="div"
+                                            count={this.state.weekAvg.items.length}
+                                            rowsPerPage={this.state.rowsPerPage}
+                                            page={this.state.page}
+                                            onPageChange={this.handleChangePage}
+                                            onRowsPerPageChange={this.handleChangeRowsPerPage}
+                                        />
                                     </Paper>
                                 </CardContent>
                             </Card>
